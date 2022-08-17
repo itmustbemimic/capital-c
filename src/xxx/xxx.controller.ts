@@ -1,15 +1,15 @@
-import { Controller, Get } from '@nestjs/common';
-import { scanTable } from './xxx.services';
+import { Body, Controller, Get, Post } from '@nestjs/common';
+import { scanTable, putItem } from './xxx.services';
 
 @Controller('xxx')
 export class XxxController {
   @Get()
-  findAll(): string {
-    let result;
-    scanTable().then((item) => {
-      result = item;
-    });
+  findAll() {
+    return scanTable();
+  }
 
-    return result;
+  @Post()
+  inputData(@Body() body) {
+    return putItem(body);
   }
 }
