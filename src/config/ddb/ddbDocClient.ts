@@ -1,4 +1,4 @@
-import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
+import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import { ddbClient } from './ddbClient';
 
 const marshallOptions = {
