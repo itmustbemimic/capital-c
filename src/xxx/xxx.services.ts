@@ -1,6 +1,7 @@
 import { ddbDocClient } from '../config/ddb/ddbDocClient';
 import { PutCommand, ScanCommand } from '@aws-sdk/lib-dynamodb';
-import * as Web3 from 'web3';
+import Web3 from 'web3';
+import AbiItem from 'web3-utils';
 import _DiceJson from '../config/contracts/Dice.json';
 
 const tableName = 'history';
@@ -16,7 +17,6 @@ export const scanTable = async () => {
   } catch (err) {
     console.error('Error! :::', err);
   }
-
 };
 
 export const putItem = async (body) => {
@@ -45,11 +45,14 @@ export const putItem = async (body) => {
 
 export const getItem = async () => {
   const url = 'wss://ws-mumbai.matic.today/';
-  const provider = new Web3.provider.WebSocketProvider(url);
-  const web3 = new Web3(provider);
+  //const provider = new Web3.providers.WebsocketProvider(url);
+  const web3 = new Web3(url);
+  console.log(web3.version);
+
+
 
   const DiceContract = new web3.eth.Contract(
-    _DiceJson.abi,
+    _DiceJson.abi as AbiItem[],
     _DiceJson.networks[80001].address,
   );
 
@@ -62,7 +65,8 @@ export const getItem = async () => {
   };
 
   DiceContract.events.BetPlaced(options).on('data', (event) => {
-    const { betId, player, amount, rollUnder, choice, outcome, winAmount } = event.returnValues;
+    const { betId, player, amount, rollUnder, choice, outcome, winAmount } =
+      event.returnValues;
     const item = {
       game: 'dice',
       date: new Date().toUTCString(),
