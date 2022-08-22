@@ -1,7 +1,7 @@
 import { ddbDocClient } from '../config/ddb/ddbDocClient';
 import { PutCommand, ScanCommand } from '@aws-sdk/lib-dynamodb';
 import Web3 from 'web3';
-import AbiItem from 'web3-utils';
+import { AbiItem } from 'web3-utils';
 import _DiceJson from '../config/contracts/Dice.json';
 
 const tableName = 'history';
@@ -49,8 +49,6 @@ export const getItem = async () => {
   const web3 = new Web3(url);
   console.log(web3.version);
 
-
-
   const DiceContract = new web3.eth.Contract(
     _DiceJson.abi as AbiItem[],
     _DiceJson.networks[80001].address,
@@ -64,19 +62,48 @@ export const getItem = async () => {
     fromBlock: currentBlockNumber,
   };
 
-  DiceContract.events.BetPlaced(options).on('data', (event) => {
-    const { betId, player, amount, rollUnder, choice, outcome, winAmount } =
-      event.returnValues;
-    const item = {
-      game: 'dice',
-      date: new Date().toUTCString(),
-      bet: amount,
-      choice: choice,
-      payout: winAmount,
-      player: player,
-      result: outcome,
-    };
+  //betplace betsettled 둘다 와야 정상
+  //betplaced만 오면 환불
 
-    console.log(item);
-  });
+  DiceContract.events
+    .BetPlaced(options)
+    .on('data', (event) => {
+      const { betId, player, amount, rollUnder, choice, outcome, winAmount } =
+        event.returnValues;
+      const item = {
+        game: 'dice',
+        date: new Date().toUTCString(),
+        bet: amount,
+        choice: choice,
+        payout: winAmount,
+        player: player,
+        result: outcome,
+      };
+
+      console.log('betplaced ::', item);
+    })
+    .on('connected', (id) => {
+      console.log('BetPlaced connected! : ', id);
+    });
+
+  DiceContract.events
+    .BetSettled(options)
+    .on('data', (event) => {
+      const { betId, player, amount, rollUnder, choice, outcome, winAmount } =
+        event.returnValues;
+      const item = {
+        game: 'dice',
+        date: new Date().toUTCString(),
+        bet: amount,
+        choice: choice,
+        payout: winAmount,
+        player: player,
+        result: outcome,
+      };
+      putItem(item);
+      console.log('betsettled :: ', item);
+    })
+    .on('connected', (id) => {
+      console.log('BetSettled connected! : ', id);
+    });
 };
