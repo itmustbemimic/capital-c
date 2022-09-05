@@ -4,12 +4,13 @@ import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
 import _DiceJson from '../config/contracts/Dice.json';
 
-const tableName = 'history';
+const gameResultTable = 'history';
+const privateSaleTable = 'private_sale';
 
 export const scanTable = async () => {
   try {
     const params = {
-      TableName: tableName,
+      TableName: gameResultTable,
     };
     const data = await ddbDocClient.send(new ScanCommand(params));
     console.log('success', data.Items);
@@ -19,9 +20,9 @@ export const scanTable = async () => {
   }
 };
 
-export const putItem = async (body) => {
+export const putGameResult = async (body) => {
   const params = {
-    TableName: tableName,
+    TableName: gameResultTable,
     Item: {
       game: body.game, //게임이름
       date: new Date().toUTCString(), //시간
@@ -43,7 +44,7 @@ export const putItem = async (body) => {
   }
 };
 
-export const getItem = async () => {
+export const getGameResult = async () => {
   const url = 'wss://ws-mumbai.matic.today/';
   //const provider = new Web3.providers.WebsocketProvider(url);
   const web3 = new Web3(url);
@@ -100,10 +101,27 @@ export const getItem = async () => {
         player: player,
         result: outcome,
       };
-      putItem(item);
+      putGameResult(item);
       console.log('betsettled :: ', item);
     })
     .on('connected', (id) => {
       console.log('BetSettled connected! : ', id);
     });
+};
+
+export const putPrivateSale = async (body) => {
+  const params = {
+    TableName: privateSaleTable,
+    Item: {
+      user_address: body.address,
+      amount: body.amount,
+    },
+  };
+
+  try {
+    const data = await ddbDocClient.send(new PutCommand(params));
+    console.log('put item success ::', data);
+  } catch (err) {
+    console.error('error! :::', err);
+  }
 };

@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { scanTable, putItem, getItem } from './xxx.services';
+import { scanTable, putGameResult, getGameResult, putPrivateSale } from "./xxx.services";
 
 @Controller('xxx')
 export class XxxController {
@@ -10,12 +10,17 @@ export class XxxController {
 
   @Post()
   inputData(@Body() body) {
-    return putItem(body);
+    return putGameResult(body);
   }
 
   @Get('test')
   test() {
-    getItem();
+    getGameResult();
     return 'hi';
+  }
+
+  @Post('ps')
+  privateSale(@Body() body) {
+    return putPrivateSale(body);
   }
 }
