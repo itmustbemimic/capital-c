@@ -1,1 +1,3 @@
-make that shit
+- Nest.js
+- Web3.js
+- AWS DynamoDB
