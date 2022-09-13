@@ -1,3 +1,4 @@
-- Nest.js
+- TypeScript
+- NestJS
 - Web3.js
 - AWS DynamoDB
