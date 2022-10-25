@@ -5,7 +5,7 @@ import { AbiItem } from 'web3-utils';
 import _DiceJson from '../config/contracts/Dice.json';
 
 const gameResultTable = 'history';
-const privateSaleTable = 'private_sale';
+const privateSaleTable = 'private_sale2';
 
 export const scanTable = async () => {
   try {
@@ -113,8 +113,13 @@ export const putPrivateSale = async (body) => {
   const params = {
     TableName: privateSaleTable,
     Item: {
-      user_address: body.address,
-      amount: body.amount,
+      networkId: body.networkId,
+      address: body.address,
+      currency: body.currency,
+      investment: body.investment,
+      neon: body.neon,
+      tx: body.tx,
+      date: new Date().toUTCString(),
     },
   };
 
@@ -125,3 +130,5 @@ export const putPrivateSale = async (body) => {
     console.error('error! :::', err);
   }
 };
+
+
