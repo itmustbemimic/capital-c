@@ -3,6 +3,8 @@ import { PutCommand, ScanCommand } from '@aws-sdk/lib-dynamodb';
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
 import _DiceJson from '../config/contracts/Dice.json';
+import * as http from "http";
+import { HttpCode } from "@nestjs/common";
 
 const gameResultTable = 'history';
 const privateSaleTable = 'private_sale2';
@@ -130,5 +132,3 @@ export const putPrivateSale = async (body) => {
     console.error('error! :::', err);
   }
 };
-
-
