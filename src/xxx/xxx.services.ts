@@ -3,8 +3,6 @@ import { PutCommand, ScanCommand } from '@aws-sdk/lib-dynamodb';
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
 import _DiceJson from '../config/contracts/Dice.json';
-import * as http from "http";
-import { HttpCode } from "@nestjs/common";
 
 const gameResultTable = 'history';
 const privateSaleTable = 'private_sale2';
@@ -109,26 +107,4 @@ export const getGameResult = async () => {
     .on('connected', (id) => {
       console.log('BetSettled connected! : ', id);
     });
-};
-
-export const putPrivateSale = async (body) => {
-  const params = {
-    TableName: privateSaleTable,
-    Item: {
-      networkId: body.networkId,
-      address: body.address,
-      currency: body.currency,
-      investment: body.investment,
-      neon: body.neon,
-      tx: body.tx,
-      date: new Date().toUTCString(),
-    },
-  };
-
-  try {
-    const data = await ddbDocClient.send(new PutCommand(params));
-    console.log('put item success ::', data);
-  } catch (err) {
-    console.error('error! :::', err);
-  }
 };
