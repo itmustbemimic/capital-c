@@ -20,7 +20,9 @@ export const putPrivateSale = async (body) => {
   try {
     const data = await ddbDocClient.send(new PutCommand(params));
     console.log('put item success ::', data);
+    return data;
   } catch (err) {
     console.log('put item error! :::', err);
+    return err;
   }
 };
