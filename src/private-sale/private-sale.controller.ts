@@ -1,18 +1,18 @@
-import { Controller, Body, Post, Res, HttpStatus } from "@nestjs/common";
-import { putPrivateSale } from './private-sale.services';
-import { ApiOperation } from '@nestjs/swagger';
+import { Controller, Body, Post, Res, HttpCode } from '@nestjs/common';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CreatePrivateSaleDto } from './private-sale.dto';
+import { PrivateSaleService } from './private-sale.service';
 
 @Controller('private-sale')
 export class PrivateSaleController {
+  constructor(private readonly privateSaleService: PrivateSaleService) {}
+
   @Post()
   @ApiOperation({
     summary: 'private sale 입력',
     description: '누가 사면 db에 저장',
   })
-  privateSale(@Body() privateSaleDto: CreatePrivateSaleDto, @Res() res: Response) {
-    const privateSale = putPrivateSale(privateSaleDto);
-
-    return privateSale;
+  createPrivateSale(@Body() privateSaleDto: CreatePrivateSaleDto, @Res() res) {
+    return this.privateSaleService.create(privateSaleDto);
   }
 }
