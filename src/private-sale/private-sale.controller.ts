@@ -1,4 +1,4 @@
-import { Controller, Body, Post, Res, HttpCode } from '@nestjs/common';
+import { Controller, Body, Post, Res, HttpCode, Get, Param } from "@nestjs/common";
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CreatePrivateSaleDto } from './private-sale.dto';
 import { PrivateSaleService } from './private-sale.service';
@@ -14,5 +14,14 @@ export class PrivateSaleController {
   })
   createPrivateSale(@Body() privateSaleDto: CreatePrivateSaleDto, @Res() res) {
     return this.privateSaleService.create(privateSaleDto);
+  }
+
+  @Get('/:addr')
+  @ApiOperation({
+    summary: '구매 내역 보기',
+    description: '유저 주소 입력하면 구매내역 나옴',
+  })
+  getPrivateSale(@Param('addr') user_address: string) {
+    return this.privateSaleService.getOne(user_address);
   }
 }

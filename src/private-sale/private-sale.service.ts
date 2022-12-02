@@ -1,5 +1,5 @@
 import { ddbDocClient } from '../config/ddb/ddbDocClient';
-import { PutCommand, ScanCommand } from '@aws-sdk/lib-dynamodb';
+import { GetCommand, PutCommand, ScanCommand } from '@aws-sdk/lib-dynamodb';
 import { CreatePrivateSaleDto } from './private-sale.dto';
 import { Injectable } from '@nestjs/common';
 
@@ -28,6 +28,24 @@ export class PrivateSaleService {
     } catch (err) {
       console.log('put item error :: ', err);
       return false;
+    }
+  }
+
+  async getOne(user_address: string) {
+    const params = {
+      TableName: privateSaleTable,
+      Key: {
+        address: user_address,
+      },
+    };
+
+    try {
+      const data = await ddbDocClient.send(new GetCommand(params));
+      console.log('get item success:: ', data);
+      return data;
+    } catch (err) {
+      console.log('get item error :: ', err);
+      return err.$metadata;
     }
   }
 }
