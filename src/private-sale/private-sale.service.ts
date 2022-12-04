@@ -1,7 +1,11 @@
 import { ddbDocClient } from '../config/ddb/ddbDocClient';
-import { GetCommand, PutCommand, ScanCommand } from '@aws-sdk/lib-dynamodb';
+import { GetCommand, PutCommand, QueryCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { CreatePrivateSaleDto } from './private-sale.dto';
 import { Injectable } from '@nestjs/common';
+
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+
+const dbclient = new DynamoDBClient({ region: 'ap-northeast-2' });
 
 const privateSaleTable = 'private_sale2';
 
@@ -24,25 +28,26 @@ export class PrivateSaleService {
     try {
       const data = await ddbDocClient.send(new PutCommand(params));
       console.log('put item success :: ', data);
-      return true;
+      return data;
     } catch (err) {
       console.log('put item error :: ', err);
-      return false;
+      return err.$metadata;
     }
   }
 
-  async getOne(user_address: string) {
+  async getItems(user_address: string) {
     const params = {
       TableName: privateSaleTable,
-      Key: {
-        address: user_address,
+      FilterExpression: 'address = :addr',
+      ExpressionAttributeValues: {
+        ':addr': user_address,
       },
     };
 
     try {
-      const data = await ddbDocClient.send(new GetCommand(params));
+      const data = await ddbDocClient.send(new ScanCommand(params));
       console.log('get item success:: ', data);
-      return data;
+      return data.Items;
     } catch (err) {
       console.log('get item error :: ', err);
       return err.$metadata;
