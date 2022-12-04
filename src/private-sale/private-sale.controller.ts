@@ -19,7 +19,7 @@ export class PrivateSaleController {
   @Get('/:addr')
   @ApiOperation({
     summary: '구매 내역 보기',
-    description: '유저 주소 입력하면 구매내역 나옴',
+    description: '유저 주소 입력하면 구매내역 나옴ㅁ',
   })
   getPrivateSale(@Param('addr') user_address: string) {
     return this.privateSaleService.getItems(user_address);
